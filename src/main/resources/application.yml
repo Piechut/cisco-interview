@@ -1,0 +1,38 @@
+micronaut:
+  application:
+    name: demo
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+datasources:
+  default:
+    driver-class-name: org.postgresql.Driver
+    db-type: postgres
+    dialect: POSTGRES
+    username: 'postgres'
+    password: 'secret' # normally provided by secret manager
+    jdbc-url: jdbc:postgresql://127.0.0.1:5432/demo
+    schema: demo
+flyway:
+  enabled: true
+  datasources:
+    default:
+      enabled: true
+      clean-schema: false
+      schemas: demo
+      default-schema: demo
+      locations: classpath:db/migration
+netty:
+  default:
+    allocator:
+      max-order: 3
+
+endpoints:
+  flyway:
+    enabled: true
+    sensitive: false
