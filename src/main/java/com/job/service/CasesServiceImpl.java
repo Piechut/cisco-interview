@@ -3,7 +3,6 @@ package com.job.service;
 import com.job.exceptions.EntityNotFoundException;
 import com.job.repository.CasesRepository;
 import com.job.resource.Case;
-import com.job.resource.Note;
 import com.job.resource.User;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +15,10 @@ import java.util.List;
 class CasesServiceImpl implements CasesService {
   private final CasesRepository casesRepository;
   private final UsersService usersService;
-  private final NotesService notesService;
 
   @Override
   public Case getById(final Long caseId) {
-    return casesRepository.findById(caseId)
+    return casesRepository.findByCaseId(caseId)
             .orElseThrow(() -> new EntityNotFoundException(Case.class, caseId));
   }
 
@@ -29,15 +27,8 @@ class CasesServiceImpl implements CasesService {
   public Case saveCase(Case caseEntity) {
     User user = usersService.getUser(caseEntity.getUser());
     caseEntity.setUser(user);
+    caseEntity.getNotes().forEach(note -> note.set_case(caseEntity));
     final Case savedCase = casesRepository.save(caseEntity);
-    List<Note> notes = caseEntity.getNotes()
-            .stream()
-            .map(note -> {
-              note.setCaseId(savedCase.getCaseId());
-              return note;
-            })
-            .toList();
-    notesService.saveNotes(notes);
     return savedCase;
   }
 

@@ -1,34 +1,39 @@
 package com.job.resource;
 
-import io.micronaut.data.annotation.GeneratedValue;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.Relation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.GenerationType.AUTO;
 
 @Data
 @Builder
 @AllArgsConstructor
-@MappedEntity("cases")
+@Entity
+@Table(name = "cases")
 public class Case {
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = AUTO)
   private Long caseId;
   private String title;
   private String description;
   private Integer severity;
+  @Enumerated(EnumType.STRING)
   private Status status;
-  @Relation(Relation.Kind.MANY_TO_ONE)
+  @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinColumn(name = "userId", referencedColumnName = "userId")
   private User user;
 
-  // This relation doesn't work as expected with Micronaut JDBC, I didn't figure it out in time
-  @Relation(Relation.Kind.ONE_TO_MANY)
-  private List<Note> notes;
+  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, mappedBy = "_case")
+  private List<Note> notes = new ArrayList<>();
 
+  public Case() {
+
+  }
 
   public enum Status {
     OPEN,

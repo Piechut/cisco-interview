@@ -67,7 +67,7 @@ public class CaseResource {
   HttpResponse<Note> addNote(@PathVariable Long caseId, @RequestBody String detail) {
 
     return HttpResponse.created(notesService.saveNote(Note.builder()
-            .caseId(caseId)
+            ._case(Case.builder().caseId(caseId).build())
             .details(detail)
             .build()));
   }

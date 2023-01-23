@@ -32,6 +32,14 @@ netty:
     allocator:
       max-order: 3
 
+jpa:
+  default:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        show_sql: true
+
 endpoints:
   flyway:
     enabled: true
